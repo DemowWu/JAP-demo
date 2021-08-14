@@ -1,0 +1,47 @@
+<template>
+  <div class="layout" style="background-color:aliceblue">
+    <el-backtop target=".layout" :visibility-height="200">
+      <div style="
+           {
+            height: 100%;
+            width: 100%;
+            background-color: #f2f5f6;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+            text-align: center;
+            line-height: 40px;
+            color: #1989fa;
+          }
+        " >
+        UP
+      </div>
+    </el-backtop>
+    <headers></headers>
+    <Aside></Aside>
+    <IndexDetail></IndexDetail>
+  </div>
+</template>
+
+<script>
+import Headers from "@/components/Headers";
+import Aside from "@/components/Aside";
+import IndexDetail from "@/views/IndexDetail";
+import { toIndex } from "@/api/Jrequest"
+export default {
+  name: "IndexForJfinal",
+  components: {Headers,Aside,IndexDetail},
+  methods:{
+    goHome(){
+      toIndex().then(function (res) {
+        console.log(res)
+      });
+    }
+  }
+}
+</script>
+
+<style scoped>
+.layout{
+  height: 680px;
+  overflow-x: hidden;
+}
+</style>
