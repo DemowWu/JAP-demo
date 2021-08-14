@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+
+<body>
+<h1>Jfinal code模式</h1>
+<link href="{{$rc.contextPath}}/static/js/app.cb39fb9d.js">
+<img src="{{$rc.contextPath}}/static/favicon.ico">
+以gitee建立第三方应用为例子
+<h1 style="text-align: center">这是第三方首页</h1>
+<span id="msg">还未登录，请先登录！</span>
+<button  onclick=javascrtpt:window.location.href="https://gitee.com/oauth/authorize?client_id=12e2f9e10829d3da70739e4e8b83c747b4ac6d78e08693bbce990ba9c2063e2a&redirect_uri=http://127.0.0.1:8091/callback&response_type=code&state=111" type="button">登录</button>
+<script type="text/javascript">
+    function toLogin(){
+        // var obj = $('[name="types"]');
+        // check_val = [];
+        // for(k in obj){
+        //     if(obj[k].checked)
+        //         check_val.push(obj[k].value);
+        // }
+        variable = new XMLHttpRequest();
+        document.getElementById("msg").innerHTML="正在授权。。。。";
+        // xhttp.redirect("GET", "/toAuth", true);
+        xhttp.open("GET","/toAuth",true);
+        xhttp.send();
+        // $("#id").value(check_val);
+
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css"/>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+	<title>JAP For Jfinal Demo首页</title>
+</head>
+
+<body>
+<div id="app">
+	<div class="collapse">
+		<el-collapse v-model="description" class="collapse-item1">
+			<el-collapse-item >
+				<template slot="title">
+					Jfinal
+					<el-tooltip content="基于Jifnal框架实现JAP的demo" effect="dark" placement="right-end">
+						<i class="header-icon el-icon-info"></i>
+						<!-- :style = "isActive ? '':'darkorange'" -->
+					</el-tooltip>
+				</template>
+				<div class="frames">
+					<div class="demoJfinal">
+						<el-row gutter="5">
+							<el-col span="6">
+								<el-button size="small" type="primary" plain @click="statusThirdLogin = true">第三方登录</el-button>
+								<el-dialog title="Jfinal-第三方登录" width="600px" style="font-size: medium; text-align: center;" :visible.sync="statusThirdLogin">
+									<div slot="title" >
+										<el-tooltip content="第三方登录,这里选择以Gitee第三方应用为例" placement="top">
+											<i class="el-icon-chat-dot-round"></i>
+										</el-tooltip>
+										Jfinal框架下JAP的第三方登录Demo
+										<el-popover style="text-align:right;" title="注意事项" placement="top" width="100" trigger="hover" content="第三方登录需要拿到第三方用户信息">
+											<el-link type="primary" slot="reference" href="https://justauth.wiki/oauth/gitee.html#_1-%E7%94%B3%E8%AF%B7%E5%BA%94%E7%94%A8"><i class="el-icon-view el-icon--right"></i>参考链接</el-link>
+										</el-popover>
+										<br />
+										<el-divider>
+											<third-login title="Jfinal" class="animate__animated animate__fadeInUp"></third-login>
+										</el-divider>
+										<el-form status-icon ref="userInfo" :model="userInfo" label-width="100px">
+											<el-form-item label="ClientId" prop="clientId"class="animate__animated animate__fadeInRight animate__slow">
+												<el-input v-model="userInfo.clientId" autocomplete="off" placeholder="请输入clientId"></el-input>
+											</el-form-item>
+											<el-form-item label="RedirectURI" prop="redirectURI" class="animate__animated animate__fadeInRight animate__slow animate__delay-1s">
+												<el-input v-model="userInfo.redirectURI" autocomplete="off" placeholder="请输入redirectURI"></el-input>
+											</el-form-item>
+											<el-form-item label="ClientSecret" prop="clientSecret" class="animate__animated animate__fadeInRight animate__slow animate__delay-2s">
+												<el-input type="password" v-model="userInfo.clientSecret" autocomplete="off" placeholder="请输入clientSecret"></el-input>
+											</el-form-item>
+										</el-form>
+										<div slot="footer" class="dilog-footer">
+											<el-button @click="statusThirdLogin = false" placement="left">忘记密码</el-button>
+
+											<el-button type="primary" @click = "goAuthorization">确认登录</el-button>
+										</div>
+									</div>
+								</el-dialog>
+							</el-col>
+							<el-col span="6">
+								<el-button size="small" type="danger" plain @click="statusOAuthLogin  =true">OAuth登录</el-button>
+								<el-dialog title="Jfinal-OAuth登录" width="600px" style="font-size: medium; text-align: center;" :visible.sync="statusOAuthLogin">
+									<div slot="title" >
+										<el-tooltip content="第三方登录,这里选择以Gitee第三方应用为例" placement="top">
+											<i class="el-icon-chat-dot-round"></i>
+										</el-tooltip>
+										JAP的OAuth模式Demo
+										<el-popover style="text-align:right;" title="注意事项" placement="top" width="100" trigger="hover" content="第三方登录需要拿到第三方用户信息">
+											<el-link type="primary" slot="reference" href="https://justauth.wiki/oauth/gitee.html#_1-%E7%94%B3%E8%AF%B7%E5%BA%94%E7%94%A8"><i class="el-icon-view el-icon--right"></i>参考链接</el-link>
+										</el-popover>
+										<br />
+										<el-divider>
+											<third-login title="Jfinal" class="animate__animated animate__fadeInUp"></third-login>
+										</el-divider>
+										<div class="OauthAuthorizationWay">
+											<el-row type="flex" justify="space-around" class="row-bg animate__animated animate__bounceInLeft">
+												<el-col :span="6"><el-radio v-model="choose" label="1" id="radiway1">authorization code</el-radio></el-col>
+												<el-col :span="6" :pull="1"><el-radio v-model="choose" label="2" id="radiway2">implicit</el-radio></el-col>
+											</el-row>
+											<el-row type="flex" justify="space-around" class="row-bg animate__animated animate__bounceInRight">
+												<el-col :span="6"><el-radio v-model="choose" label="3" id="radiway3">password credentials</el-radio></el-col>
+												<el-col :span="6"><el-radio v-model="choose" label="4" id="radiway4" @change="jello">client credentials</el-radio></el-col>
+											</el-row>
+											<div>
+												<div name="slide-fade">
+													<el-form v-if="choose === '0'">
+														<el-skeleton :rows="4" animated />
+													</el-form>
+													<el-form v-if ="choose === '1'" status-icon ref="userInfo" :model="userInfo" label-width="100px">
+														<el-form-item label="ClientId" prop="clientId" >
+															<el-input v-model="userInfo.clientId" width="300px" autocomplete="off" placeholder="请输入clientId" class="animate__animated animate__fadeInRight animate__slow"></el-input>
+														</el-form-item>
+														<el-form-item label="RedirectURI" prop="redirectURI">
+															<el-input v-model="userInfo.redirectURI" autocomplete="off" placeholder="请输入redirectURI" class="animate__animated animate__fadeInRight animate__slow animate__delay-1s"></el-input>
+														</el-form-item>
+														<el-form-item label="ClientSecret" prop="clientSecret">
+															<el-input type="password" v-model="userInfo.clientSecret" autocomplete="off" placeholder="请输入clientSecret" class="animate__animated animate__fadeInRight animate__slow animate__delay-2s"></el-input>
+														</el-form-item>
+													</el-form>
+													<el-form v-if ="choose === '2'" status-icon ref="userInfo" :model="userInfo" label-width="100px">
+														<el-form-item label="ClientId" prop="clientId" >
+															<el-input v-model="userInfo.clientId" width="300px" autocomplete="off" placeholder="请输入clientId" class="animate__animated animate__fadeInRight animate__slow"></el-input>
+														</el-form-item>
+														<el-form-item label="RedirectURI" prop="redirectURI">
+															<el-input v-model="userInfo.redirectURI" autocomplete="off" placeholder="请输入redirectURI" class="animate__animated animate__fadeInRight animate__slow animate__delay-1s"></el-input>
+														</el-form-item>
+														<el-form-item label="ClientSecret" prop="clientSecret">
+															<el-input type="password" v-model="userInfo.clientSecret" autocomplete="off" placeholder="请输入clientSecret" class="animate__animated animate__fadeInRight animate__slow animate__delay-2s"></el-input>
+														</el-form-item>
+													</el-form>
+													<el-form v-if="choose === '3'" status-icon ref="userInfo" :model="userInfo" label-width="100px">
+														<el-form-item label="email" prop="userName" >
+															<el-input v-model="userInfo.userName" autocomplete="off" placeholder="请输入邮箱" class="animate__animated animate__fadeInRight animate__slow"></el-input>
+														</el-form-item>
+														<el-form-item label="passWord" prop="passWord">
+															<el-input v-model="userInfo.passWord" autocomplete="off" placeholder="请输入密码" class="animate__animated animate__fadeInRight animate__slow animate__delay-1s"></el-input>
+														</el-form-item>
+													</el-form>
+
+												</div>
+												<el-form v-if="choose === '4'" status-icon ref="userInfo" :model="userInfo" label-width="100px">
+													<el-form-item label="email" prop="userName" >
+														<el-input v-model="userInfo.userName" autocomplete="off" placeholder="请输入邮箱" class="animate__animated animate__fadeInRight animate__slow"></el-input>
+													</el-form-item>
+													<el-form-item label="passWord" prop="passWord">
+														<el-input v-model="userInfo.passWord" autocomplete="off" placeholder="请输入密码" class="animate__animated animate__fadeInRight animate__slow animate__delay-1s"></el-input>
+													</el-form-item>
+												</el-form>
+
+											</div>
+										</div>
+										<div slot="footer" class="dilog-footer">
+											<el-button @click="statusThirdLogin = false" placement="left">忘记密码</el-button>
+
+											<el-button type="primary" @click = "goAuthorization">确认登录</el-button>
+										</div>
+									</div>
+
+
+								</el-dialog>
+							</el-col>
+							<el-col span="6">
+								<el-button size="small" type="primary" plain @click="statusOIDCLogin">OIDC登录</el-button>
+							</el-col>
+							<el-col span="6">
+								<el-button size="small" type="danger" plain @click="statusGeneralLogin">账号密码登录</el-button>
+							</el-col>
+						</el-row>
+					</div>
+				</div>
+			</el-collapse-item>
+		</el-collapse>
+	</div>
+</div>
+<script type="text/javascript">
+	// var vueRouters = new VueRouter({
+	// 	mode:'history',
+	// 	routes:[
+	// 		{path:'enterLogin',redirect:'/authorizing'}
+	// 	]
+	// })
+	Vue.component('third-login',{
+		props:['title','link'],
+		template: `
+			<el-tag type="primary" style="height: 40px; width: 130px; text-align: center; font-size: medium;"><el-link type="primary" href="https://jfinal.com/">{{ title }}</el-link></el-tag>
+		  `
+	})
+	var vm = new Vue({
+		el:'#app',
+		data:{
+			window: -1,
+			choose: '0',
+			frameworks: ['Jfinal','Blade','ActFramework'],
+			description: "框架使用",
+			statusThirdLogin: false,
+			statusOAuthLogin: false,
+			statusOIDCLogin: false,
+			statusGeneralLogin: false,
+			userInfo:{
+				clientId: '',
+				clientSecret: '',
+				code: '',
+				redirectURI:'',
+				userName:'',
+				passWord:''
+			},
+			authorize:{
+				deafault: '//gitee.com/oauth/authorize?',
+				head: ''
+
+			}
+
+		},
+		methods:{
+			goAuthorization: function(){
+				var loadsrc = "https://gitee.com/oauth/authorize";
+				var client_id = this.userInfo.clientId;
+				var redirect_uri = this.userInfo.redirectURI;
+				var href = loadsrc+'?client_id=' + client_id +'&redirect_uri=' + redirect_uri +'&response_type=code';
+				if(href !== "loadsrc")
+				{
+					console.log(href);
+					window.location.href = href;
+				}
+			},
+			jello:function(){
+				console.log(this.choose,'radiway'+this.choose);
+				document.getElementsById('radiway'+this.choose).classList.add('animate__animated', 'animate__jello');
+			}
+		}
+	})
+</script>
+<style type="text/css">
+	.collapse{
+		width: 430px;
+		height: 800px;
+	}
+	.OauthAuthorizationWay{
+		margin-bottom: 6px;
+		width: 560px;
+	}
+
+</style>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.whq</groupId>
+    <artifactId>JAP-demo</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>JFinal-JAP</module>
+        <module>Blade-JAP</module>
+        <module>Actframework-JAP</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.16</version>
+            <scope>provided</scope>
+        </dependency>
+<!--    该版本此处authenticate返回值有问题 JapResponse japResponse = simpleStrategy.authenticate(new SimpleConfig(), request, response);-->
+<!--        <dependency>-->
+<!--            <groupId>com.fujieid</groupId>-->
+<!--            <artifactId>jap-simple</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>com.fujieid</groupId>
+            <artifactId>jap-simple</artifactId>
+            <version>1.0.1-alpha.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fujieid</groupId>
+            <artifactId>jap-social</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fujieid</groupId>
+            <artifactId>jap-oauth2</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fujieid</groupId>
+            <artifactId>jap-oidc</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>me.zhyd.oauth</groupId>
+            <artifactId>JustAuth</artifactId>
+            <version>1.15.9</version>
+        </dependency>
+    </dependencies>
+</project>
