@@ -1,9 +1,15 @@
 <template>
   <div class="header">
-    <el-drawer title="开源赋能开发者. Just auth into any app." :visible.sync="headdrawer" :direction="direction" class="drawer">
-      <span>描述项目内容</span>
+    <el-drawer title="开源赋能开发者. Just auth into any app." :visible.sync="headdrawer1" :direction="direction" class="drawer">
+      <span><a style="color:Tomato;font-size: 18px;margin-left: 40px">项目名称：</a>开发JFinal、Blade、ActFramework集成JustAuthPlus的Demo</span><br>
+      <span><a style="color:Tomato;font-size: 18px;margin-left: 40px">专注领域：</a>Dev Tools，登录认证，OAuth，Social，OIDC</span><br>
+      <span><a style="color:Tomato;font-size: 18px;margin-left: 40px">技术标签：</a>Java，Git，JFinal，Blade，ActFramework，第三方登录，OAuth2，JavaScript，animate，Vue，Axios，ElementUI等</span><br>
     </el-drawer>
+      <el-drawer title="开源赋能开发者. Just auth into any app." :visible.sync="headdrawer2" :direction="direction" class="drawer">
+          <span><a style="color:Tomato;font-size: 18px;margin-left: 100px">导师：</a>张亚东(<el-link>zhyd@fujieid.com</el-link>)</span><br>
 
+          <span><a style="color:Tomato;font-size: 18px;margin-left: 82px">开发者：</a>吴豪琪 (whhwuemail@gmail.com)</span><br>
+      </el-drawer>
     <el-row :gutter="3">
       <el-col :span="6" :offset="1">
         <el-link href="https://justauth.plus/">
@@ -14,8 +20,8 @@
       <el-col :span="6" :offset="-1">
         <div class="location-header">
           <div class="demo-design">
-            <el-button @click="headdrawer=!headdrawer" class="button1">
-              demo介绍
+            <el-button @click="headdrawer1=!headdrawer1" class="button1">
+              <a style="font-size: 18px;color: red">项目介绍说明</a>
             </el-button>
           </div>
         </div>
@@ -24,8 +30,8 @@
         <div class="location-header">
           <div class="location-header">
             <div class="demo-design">
-              <el-button @click="headdrawer=!headdrawer" class="button1">
-                demo介绍
+              <el-button @click="headdrawer2=!headdrawer2" class="button1">
+                  <a style="font-size: 18px;color: red">项目主导师及开发者</a>
               </el-button>
             </div>
           </div>
@@ -46,7 +52,8 @@ export default {
         dMark: ''
       },
       direction: 'ttb',
-      headdrawer:true
+      headdrawer1:true,
+      headdrawer2:false
     }
   }
 }

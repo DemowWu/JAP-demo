@@ -83,7 +83,7 @@
         </el-step>
         <el-step title=""></el-step>
         <el-step title=""></el-step>
-        <el-step title="" description="这是一段很长很长很长的描述性文字"></el-step>
+        <el-step title=""></el-step>
       </el-steps>
     </div>
     <slot></slot>

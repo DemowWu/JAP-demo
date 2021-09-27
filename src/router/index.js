@@ -1,19 +1,19 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import IndexForJfinal from '../views/IndexForJfinal'
+import IndexMain from "@/views/IndexMain";
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/index',
-    name: 'IndexForJfinal',
-    redirect: IndexForJfinal
+    name: 'IndexMain',
+    redirect: IndexMain
   },
   {
     path: '/',
-    name: 'IndexForJfinal',
-    component: IndexForJfinal
+    name: 'IndexMain',
+    component: IndexMain
   },
 ]
 
