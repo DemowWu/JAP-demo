@@ -1,5 +1,5 @@
 ---
-### 说明
+说明
 项目名称：开发JFinal、Blade、ActFramework集成JustAuthPlus的demo。 <br>
 分支说明：目前main存放的是最终后端项目，VuePage分支存放的是最终前端Vue项目。<br>
 ---
