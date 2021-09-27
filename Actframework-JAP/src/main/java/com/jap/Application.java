@@ -1,6 +1,8 @@
 package com.jap;
 
 import act.Act;
+import act.boot.app.RunApp;
+import osgl.version.Version;
 
 /**
  * @author hq.W
@@ -9,6 +11,6 @@ import act.Act;
  */
 public class Application {
     public static void main(String[] args) throws Exception {
-        Act.start(Application.class);
+        Act.start();
     }
 }

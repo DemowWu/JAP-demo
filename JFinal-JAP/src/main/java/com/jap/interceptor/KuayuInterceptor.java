@@ -19,14 +19,12 @@ public class KuayuInterceptor implements Interceptor {
 //            获取Action的对应controller
             Controller controller = invocation.getController();
             HttpServletResponse response = controller.getResponse();
-            response.setHeader("Access-Control-Allow-Origin", "http://localhost:8082");
+            response.setHeader("Access-Control-Allow-Origin", "*");
             response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
             response.setHeader("Access-Control-Max-Age", "3600");
             response.setHeader("Access-Control-Allow-Credentials", "true");
-
-            response.setHeader("Access-Control-Expose-Headers", "*");
             response.setHeader("Access-Control-Allow-Headers",
-                    "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+                    "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,Origin");
         }
         invocation.invoke();
         System.out.println("跨域拦截处理结束");

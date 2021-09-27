@@ -7,21 +7,22 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Blade-JAP" />
         <module name="Actframework-JAP" />
+        <module name="Blade-JAP" />
         <module name="JFinal-JAP" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="ActFramework-demo" target="8" />
+      <module name="ActFramework-JAP-Change" target="8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-parameters" />
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="ActFramework-demo" options="" />
+      <module name="ActFramework-JAP-Change" options="" />
       <module name="Actframework-JAP" options="" />
       <module name="Blade-JAP" options="" />
+      <module name="JAP-demo" options="" />
       <module name="JFinal-JAP" options="" />
     </option>
   </component>

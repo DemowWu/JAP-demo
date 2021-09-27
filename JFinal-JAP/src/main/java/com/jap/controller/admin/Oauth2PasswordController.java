@@ -2,33 +2,68 @@ package com.jap.controller.admin;
 
 import cn.hutool.core.util.URLUtil;
 import com.fujieid.jap.core.JapUser;
-import com.fujieid.jap.core.JapUserService;
 import com.fujieid.jap.core.config.JapConfig;
 import com.fujieid.jap.core.result.JapResponse;
-import com.fujieid.jap.oauth2.OAuthConfig;
-import com.fujieid.jap.oauth2.Oauth2GrantType;
-import com.fujieid.jap.oauth2.Oauth2ResponseType;
-import com.fujieid.jap.oauth2.Oauth2Strategy;
+import com.fujieid.jap.oauth2.*;
+import com.jap.kit.RetKit;
 import com.jap.service.admin.JapOauth2UserServiceImpl;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
+import com.xkcoding.json.JsonUtil;
+import com.xkcoding.json.util.Kv;
+import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.utils.UuidUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.annotation.Resource;
-import javax.sound.sampled.Control;
-
 /**
  * @author hq.W
  * @program JAP-demo
  * @description Oauth2PasswordController
  */
+@Slf4j
 public class Oauth2PasswordController extends Controller {
 
+    private static Logger logger = LoggerFactory.getLogger(Oauth2PasswordController.class);
     @Resource(name = "oauth2")
     @Inject(JapOauth2UserServiceImpl.class)
-    private JapUserService japUserService;
+    private JapOauth2UserServiceImpl japUserService = new JapOauth2UserServiceImpl();
 
+    private static OAuthConfig config = new OAuthConfig();
+    private  Oauth2Strategy oauth2Strategy = new Oauth2Strategy(japUserService, new JapConfig());
+
+    @ActionKey("/oauth/password/getData")
+    public void getBaseData() throws IllegalAccessException {
+//        获取参数，这里是为了方便测试者以页面通用的方式进行输入，而不是修改源代码。但参数clientSecret等一般很重要，实际开发下不会这样使用
+        String clientId = this.getRequest().getParameter("clientId");
+        String clientSecrect = this.getRequest().getParameter("clientSecret");
+        String redirectURI = this.getRequest().getParameter("redirectURI");
+        String username = this.getRequest().getParameter("username");
+        String password = this.getRequest().getParameter("password");
+        System.out.println("\n------------------------------------------------------------------------------------------------------\n\t"+
+                "your information:\t");
+        System.out.println("\tusername: \t\t\t\t"+ username +
+                           "\n\tpassword:\t\t\t\t" + password );
+
+        config.setPlatform("gitee")
+                .setState(UuidUtils.getUUID())
+                .setClientId(clientId)
+                .setClientSecret(clientSecrect)
+                .setCallbackUrl(redirectURI)
+                .setTokenUrl("https://gitee.com/oauth/token")
+                .setScopes(new String[]{"user_info"})
+                .setGrantType(Oauth2GrantType.password)
+                .setUserinfoUrl("https://gitee.com/api/v5/user")
+                .setUserInfoEndpointMethodType(Oauth2EndpointMethodType.GET)
+                .setUsername(username)
+                .setPassword(password);
+
+        System.out.println("\tredirectURI:\t\t\t"+redirectURI);
+        logger.info("拿到参数，开始准备重定向授权页面");
+
+        this.renderAuth();
+    }
     /**
      * 准备策略：<br>
      * ----Oauth2Strategy：选择oauth验证策略，加入已经实现该策略验证方式的service具体类，这里是JapOauth2UserServiceImpl,放进AbstractJapStrategy类(下一步认证需要使用），并初始化new config：用于设置是否是单点sso登录（默认为FALSE）、缓存和token有效时间，默认失效均时间为7天，AbstractJapStrategy中添加新的JapLocalCache缓存：单点登录——SsoJapUserStore缓存，否则SessionJapUserStore缓存,<br>
@@ -43,21 +78,9 @@ public class Oauth2PasswordController extends Controller {
      * <br>
      * password模式，指定账号密码进行。在AccessTokenHelper类中，判断授权类型GrantType = password，调用getAccessTokenOfPasswordMode，从config中拿到相关参数，加入params集合，调用HttpUtils携带参数和URL，发出get请求，最终并返回AccessToken对象
      */
-    @ActionKey("/oauth2Password")
+    @ActionKey("/oauth/password")
     public void renderAuth(){
-        Oauth2Strategy oauth2Strategy = new Oauth2Strategy(japUserService,new JapConfig());
-        OAuthConfig config = new OAuthConfig();
-        config.setPlatform("gitee")
-                .setState(UuidUtils.getUUID())
-                .setClientId("12e2f9e10829d3da70739e4e8b83c747b4ac6d78e08693bbce990ba9c2063e2a")
-                .setClientSecret("45a0c6b80c87358eb4bab3fe46758e5a3aebd00d8a48def4c803cf12f45b388d")
-                .setCallbackUrl("http://127.0.0.1:8091/oauth2Password")
-                .setTokenUrl("https://gitee.com/oauth/token")
-                .setScopes(new String[]{"user_info"})
-                .setGrantType(Oauth2GrantType.password)
-                .setUserinfoUrl("https://gitee.com/api/v5/user")
-                .setUsername("jap2")
-                .setPassword("jap2");
+
         JapResponse japResponse = oauth2Strategy.authenticate(config,this.getRequest(),this.getResponse());
         if (!japResponse.isSuccess()) {
             renderJson("/?error=" + URLUtil.encode(japResponse.getMessage()));
@@ -66,8 +89,18 @@ public class Oauth2PasswordController extends Controller {
             //判断japResponse的data是否有一个以http开头的URL：((String)data).startsWith("http")
             renderText("isRedirectUrl——————>" + (String) japResponse.getData());
         } else {
-            JapUser data = (JapUser) japResponse.getData();
-            renderText("登录成功\n" + "username：" + data.getUsername() + "\npassword：" + data.getPassword() + "\ntoken：" + data.getToken() + "\nuserId：" + data.getUserId());
+
+            JapUser japUser = (JapUser) japResponse.getData();
+
+            //获取Additional的所有信息，（由object类型转为map）
+            String ad = JsonUtil.toJsonString(japUser.getAdditional());
+            Kv parseKv = JsonUtil.parseKv(ad);
+
+            System.out.println("\n\ttoken:\t\t\t\t\t" + japUser.getToken()+
+                                "\n\tcreated date:\t\t\t" + parseKv.get("created_at")+
+                                "\n\tgists_url:\t\t\t\t" + parseKv.get("gists_url")+
+                    "\n------------------------------------------------------------------------------------------------------");
+            renderJson(RetKit.ok("userInfos",japUser));
         }
     }
 

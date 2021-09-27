@@ -4,6 +4,7 @@ import com.blade.ioc.annotation.Bean;
 import com.fujieid.jap.core.JapUser;
 import com.fujieid.jap.core.JapUserService;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.utils.UuidUtils;
 
 import java.util.List;
@@ -13,9 +14,9 @@ import java.util.List;
  * @program JAP-demo
  * @description 账号密码登录-JapSimpleUserServiceImpl
  */
+@Slf4j
 @Bean
 public class JapSimpleUserServiceImpl implements JapUserService {
-    public static JapSimpleUserServiceImpl me = new JapSimpleUserServiceImpl();
     /**
      * 模拟 DB 操作
      */
@@ -30,8 +31,8 @@ public class JapSimpleUserServiceImpl implements JapUserService {
         }
     }
     /**
-    * simple：账号密码登录，则需要实现getByName和validPassword两个方法，以便authenticate认证账号密码有效性
-    */
+     * simple：账号密码登录，则需要实现getByName和validPassword两个方法，以便authenticate认证账号密码有效性
+     */
 
     @Override
     public JapUser getByName(String username) {
@@ -40,7 +41,6 @@ public class JapSimpleUserServiceImpl implements JapUserService {
                 .findFirst()
                 .orElse(null);
     }
-
     @Override
     public boolean validPassword(String password, JapUser user) {
         return user.getPassword().equals(password);

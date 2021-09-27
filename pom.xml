@@ -6,8 +6,8 @@
 
     <groupId>com.whq</groupId>
     <artifactId>JAP-demo</artifactId>
-    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <modules>
         <module>JFinal-JAP</module>
         <module>Blade-JAP</module>
@@ -20,12 +20,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
-            <scope>provided</scope>
-        </dependency>
 <!--    该版本此处authenticate返回值有问题 JapResponse japResponse = simpleStrategy.authenticate(new SimpleConfig(), request, response);-->
 <!--        <dependency>-->
 <!--            <groupId>com.fujieid</groupId>-->
@@ -57,5 +51,54 @@
             <artifactId>JustAuth</artifactId>
             <version>1.15.9</version>
         </dependency>
+<!--AtrFramework 报错-->
+<!--        <dependency>-->
+<!--            <groupId>cn.hutool</groupId>-->
+<!--            <artifactId>hutool-all</artifactId>-->
+<!--            <version>5.7.12</version>-->
+<!--        </dependency>-->
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-core</artifactId>
+            <version>5.7.13</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.73</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.3.1</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.google.code.google-collections</groupId>-->
+<!--            <artifactId>google-collect</artifactId>-->
+<!--            <version>snapshot-20080530</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework</groupId>-->
+<!--            <artifactId>spring-context</artifactId>-->
+<!--            <version>4.2.5.RELEASE</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>com.fujieid</groupId>
+            <artifactId>jap-core</artifactId>
+            <version>1.0.2</version>
+            <scope>compile</scope>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>commons-io</groupId>-->
+<!--            <artifactId>commons-io</artifactId>-->
+<!--            <version>2.4</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.commons</groupId>-->
+<!--            <artifactId>commons-lang3</artifactId>-->
+<!--            <version>3.9</version>-->
+<!--        </dependency>-->
     </dependencies>
 </project>

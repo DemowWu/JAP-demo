@@ -1,6 +1,7 @@
 package com.jap.controller.admin;
 
 import cn.hutool.core.util.URLUtil;
+import com.fujieid.jap.core.JapUser;
 import com.fujieid.jap.core.JapUserService;
 import com.fujieid.jap.core.config.JapConfig;
 import com.fujieid.jap.core.result.JapResponse;
@@ -8,36 +9,57 @@ import com.fujieid.jap.oauth2.Oauth2GrantType;
 import com.fujieid.jap.oauth2.Oauth2ResponseType;
 import com.fujieid.jap.oidc.OidcConfig;
 import com.fujieid.jap.oidc.OidcStrategy;
-import com.jap.interceptor.JapInterceptor;
-import com.jap.service.admin.JapOauth2UserServiceImpl;
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Clear;
+import com.jap.kit.RetKit;
+import com.jap.service.admin.JapOidcUserServiceImpl;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
 import me.zhyd.oauth.utils.UuidUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author hq.W
  * @program JAP-demo
  * @description OidcController
  */
-@Before(JapInterceptor.class)
 public class OidcController extends Controller {
 
-    @Inject(JapOauth2UserServiceImpl.class)
-    private JapUserService japUserService;
+    private static Logger logger = LoggerFactory.getLogger(OidcController.class);
+    private static OidcConfig config = new OidcConfig();
 
-    @ActionKey("/oidc")
-    @Clear
-    public void index() throws IOException {
-//        render("/templates/toLogin.html");
-//        this.getResponse().sendRedirect.
-               render("/toLogin.html");
+    @Inject(JapOidcUserServiceImpl.class)
+    private JapOidcUserServiceImpl japUserService = new JapOidcUserServiceImpl();
+
+    private OidcStrategy oidcStrategy = new OidcStrategy(japUserService, new JapConfig());
+
+    @ActionKey("/oidc/getData")
+    public void getBaseData(){
+//        获取参数，这里是为了方便测试者以页面通用的方式进行输入，而不是修改源代码。但参数clientSecret等一般很重要，实际开发下不会这样使用
+        String clientId = this.getRequest().getParameter("clientId");
+        String clientSecrect = this.getRequest().getParameter("clientSecret");
+        String redirectURI = this.getRequest().getParameter("redirectURI");
+
+        // 配置 OIDC 的 Issue 链接
+        config.setIssuer("https://oauth.aliyun.com")
+                .setPlatform("aliyun")
+                .setState(UuidUtils.getUUID())
+                .setClientId(clientId)
+                .setClientSecret(clientSecrect)
+                .setCallbackUrl(redirectURI)
+                .setScopes(new String[]{"aliuid","openid","profile"})
+                .setResponseType(Oauth2ResponseType.code)
+                .setGrantType(Oauth2GrantType.authorization_code);
+
+        logger.info("拿到参数，开始准备重定向授权页面");
+        this.renderAuth();
     }
+
     /**
+     * <a href="https://justauth.plus/quickstart/jap-oidc.html#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">jap-oidc 是为了方便快速的集成所有支持标准 OIDC 协议的平台而添加的增强包。</a><br>
      * 准备策略：<br>
      * ----OidcStrategy：选择oauth验证策略，加入已经实现该策略验证方式的service具体类，这里是JapOauth2UserServiceImpl,放进AbstractJapStrategy类(下一步认证需要使用），并初始化new config：用于设置是否是单点sso登录（默认为FALSE）、缓存和token有效时间，默认失效均时间为7天，AbstractJapStrategy中添加新的JapLocalCache缓存：单点登录——SsoJapUserStore缓存，否则SessionJapUserStore缓存,<br>
      * 最终一并放进JapAuthentication.setContext(japUserStore,japCache,japConfig)的context。<br>
@@ -51,32 +73,27 @@ public class OidcController extends Controller {
      * 返回到到OidcStrategy，并将其加入japCache中后，走OAuth配置流程，向oidcConfig对象中加入OidcDiscoveryDto对象的授权接口，token接口和用户信息接口，<br>
      * 将oidcCOnfig的配置内容通过BeanUtil.copyProperties，得到OAuthConcig的配置，后面就完全走OAuth的authenticate流程 。
      */
-    @ActionKey("/authOIDC")
-    @Clear
+    @ActionKey("/oidc/auth")
     public void renderAuth() {
-        OidcStrategy oidcStrategy = new OidcStrategy(japUserService, new JapConfig());
-        OidcConfig config = new OidcConfig();
-        // 配置 OIDC 的 Issue 链接
-        config.setIssuer("http://127.0.0.1:8091/")
-                .setPlatform("gitee")
-                .setState(UuidUtils.getUUID())
-                .setClientId("12e2f9e10829d3da70739e4e8b83c747b4ac6d78e08693bbce990ba9c2063e2a")
-                .setClientSecret("45a0c6b80c87358eb4bab3fe46758e5a3aebd00d8a48def4c803cf12f45b388d")
-                .setCallbackUrl("http://127.0.0.1:8091/index")
-                .setScopes(new String[]{"user_info"})
-                .setResponseType(Oauth2ResponseType.code)
-                .setGrantType(Oauth2GrantType.authorization_code);
+
         JapResponse japResponse = oidcStrategy.authenticate(config, this.getRequest(), this.getResponse());
+
         if (!japResponse.isSuccess()) {
             System.out.println(japResponse.getMessage());
-
             renderText("/?error=" + URLUtil.encode(japResponse.getMessage()));
         }
         if (japResponse.isRedirectUrl()) {
-            renderText((String) japResponse.getData());
+            renderJson(RetKit.ok("toAuth",(String)japResponse.getData()));
+            logger.info("授权成功");
         } else {
-            System.out.println(japResponse.getData());
-            render("/template/index.html");
+            JapUser japUser = (JapUser) japResponse.getData();
+            Map<String,String> userInfos = new HashMap<>();
+            userInfos.put("token",japUser.getToken());
+            userInfos.put("username",japUser.getUsername());
+            userInfos.put("userId",japUser.getUserId());
+            userInfos.put("password",japUser.getPassword());
+
+            renderJson(RetKit.ok("userInfos",userInfos));
         }
     }
 }

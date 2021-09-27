@@ -1,9 +1,7 @@
 package com.jap;
 
 import com.blade.Blade;
-import com.blade.mvc.WebContext;
-import com.blade.mvc.annotation.Param;
-import com.blade.mvc.annotation.PostRoute;
+import com.blade.security.web.auth.AuthOption;
 
 /**
  * @author hq.W
@@ -13,8 +11,6 @@ import com.blade.mvc.annotation.PostRoute;
  */
 public class Application {
     public static void main(String[] args){
-        Blade.of()
-//                .use()早于webhook执行 中间件
-                .start(Application.class,args);
+        Blade.of().start(Application.class,args);
     }
 }

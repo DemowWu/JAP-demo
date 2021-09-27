@@ -1,24 +1,28 @@
 package com.jap.controller.admin;
 
+import act.app.ActionContext;
 import act.controller.Controller;
-import act.util.Stateless;
-import cn.hutool.core.util.URLUtil;
+import act.controller.annotation.UrlContext;
+import act.view.RenderTemplate;
 import com.fujieid.jap.core.JapUser;
-import com.fujieid.jap.core.JapUserService;
 import com.fujieid.jap.core.config.JapConfig;
 import com.fujieid.jap.core.result.JapResponse;
 import com.fujieid.jap.simple.SimpleConfig;
 import com.fujieid.jap.simple.SimpleStrategy;
-import org.osgl.http.H;
+import com.jap.kit.RetKit;
+import com.jap.service.JapSimpleUserServiceImpl;
+import com.jap.utils.HttpUtils;
 import org.osgl.logging.LogManager;
 import org.osgl.logging.Logger;
 import org.osgl.mvc.annotation.GetAction;
 import org.osgl.mvc.annotation.PostAction;
+import org.osgl.mvc.result.Result;
+
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 
 /**
@@ -27,19 +31,23 @@ import javax.servlet.http.HttpServletResponse;
  * @description SimpleController
  */
 
-//疑问点：ActFramework 使用 osgl-http 提供的 H.Request 类来封装 HTTP 请求, H.Response 则封装了 HTTP 响应对象，authenticate参数中需要serverlet架构下的HttpServerletRequest，HttpServerletResponse
-@Controller("/simple")
+@UrlContext("/simple")
 public class SimpleController extends Controller.Util{
 
-    public static Logger logger = LogManager.get(SimpleController.class);
+    private static Logger logger = LogManager.get(SimpleController.class);
+
     @Inject
     @Singleton
-    @Named("simpleImpl")
-    private JapUserService japUserService;
+    private JapSimpleUserServiceImpl japSimpleUserService = new JapSimpleUserServiceImpl();
 
-    @GetAction("/")
-    public void index(){
-        redirect("templates/simplePage/loginpage.html");
+    @GetAction("test")
+    public Result toLogin(ActionContext context){
+        String name = context.req().paramVal("name");
+        if (null == name) {
+            name = "TestName";
+        }
+        context.renderArg("name",name);
+        return RenderTemplate.get();
     }
 
     /**准备策略：<br>
@@ -51,27 +59,48 @@ public class SimpleController extends Controller.Util{
      * 如果不存在(说明是第一次登录)，就先去doResolveCredential：判断username和password是否同时非空，满足则封装为一个Credential并初始化该类变量，其中的rememberMe从request的getParam("rememberMe")函数进行判断，1——>Credential.getrememberMe()为真，先使用使用service具体类的getByName方法，未查到该用户账号，响应用户不存在NOT_EXIST_USER，否则继续使用validPassword，判断密码是否有效,
      * 密码也正确，此时两个方向判断：先判断有没有实现rememberMe ——有——>测需要先addCookie，再跳转loginSuccess，设置状态码200，否则，直接跳转loginSuccess。
      */
+    @PostAction("logined")
+    public RetKit get(ActionContext context) {
+        Map<String, String[]> params = context.allParams();
+        String[] username = params.get("username");
+        String[] password = params.get("password");
 
-    @PostAction("toLogin")
-    public void toLogin(String username,String password,HttpServletRequest request,HttpServletResponse response){
+        System.out.println(username[0] + "  " + password[0]);
 
-        logger.info("用户名是：%s",username);
-        logger.info("密码是： %s",password);
+        HttpServletRequest request = HttpUtils.toHttpServletConReq(context);
+        HttpServletResponse response = HttpUtils.toHttpServletConRes(context);
 
-        System.out.println(request.getParameter("username"));
-        SimpleStrategy simpleStrategy = new SimpleStrategy(japUserService, new JapConfig());
+        SimpleStrategy simpleStrategy = new SimpleStrategy(japSimpleUserService, new JapConfig());
         JapResponse japResponse = simpleStrategy.authenticate(new SimpleConfig(), request, response);
 
         if (!japResponse.isSuccess()) {
-            renderJson("/?error=" + URLUtil.encode(japResponse.getMessage()));
+            logger.info("授权失败：%s。", japResponse.getData());
+            context.renderArg("响应失败。");
         }
+        JapUser userInfos = new JapUser();
         if (japResponse.isRedirectUrl()) {
-            //判断japResponse的data是否有一个以http开头的URL：((String)data).startsWith("http")
-            renderText("isRedirectUrl——————>"+(String) japResponse.getData());
-        }
-        else {
+            logger.info("进行授权，重定向。");
+            //判断japResponse的data是否有一个以http开头的URL(回调地址)：((String)data).startsWith("http")
+            return  RetKit.ok("toAuth", (String) japResponse.getData());
+        } else {
+            logger.info("获取已授权用户信息。");
             JapUser data = (JapUser) japResponse.getData();
-            renderText("登录成功\n"+"username："+data.getUsername()+"\npassword："+data.getPassword()+"\ntoken："+data.getToken()+"\nuserId："+data.getUserId());
+            userInfos.setUserId(data.getUserId());
+            userInfos.setUsername(data.getUsername());
+            userInfos.setPassword(data.getPassword());
+            userInfos.setToken(data.getToken());
+
+            System.out.println(
+                    "-----------------------------------------------------------------------------------------------------------------------------\n\t" +
+                            "your information:\n\t" +
+                            "userId: \t\t\t\t\t" + userInfos.getUserId() + "\n\t" +
+                            "userName: \t\t\t\t\t" + userInfos.getUsername() + "\n\t" +
+                            "passWord: \t\t\t\t\t" + userInfos.getPassword() + "\n\t" +
+                            "token: \t\t\t\t\t\t" + userInfos.getToken() + "\n" +
+                            "-----------------------------------------------------------------------------------------------------------------------------");
+            logger.info("显示用户信息");
         }
+        return RetKit.ok("userInfos", userInfos);
     }
+
 }

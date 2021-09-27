@@ -1,6 +1,5 @@
 package com.jap.service;
 
-import act.inject.AutoBind;
 import com.fujieid.jap.core.JapUser;
 import com.fujieid.jap.core.JapUserService;
 import com.google.common.collect.Lists;
@@ -13,7 +12,6 @@ import java.util.List;
  * @program JAP-demo
  * @description 账号密码登录-JapSimpleUserServiceImpl
  */
-@AutoBind
 @Named("simpleImpl")
 public class JapSimpleUserServiceImpl implements JapUserService {
     /**

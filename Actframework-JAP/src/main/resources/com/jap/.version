@@ -1,0 +1,4 @@
+artifact=${project.artifactId}
+# version=${project.version}
+# build=${buildNumber}
+version=0.0.1
