@@ -1,39 +1,16 @@
 # 基于JFinal-Blade-ActFramework框架集成JustAuthPlus的demo
 
 #### 介绍
-使用JFinal、Blade、ActFramework框架集成JAP的demo。采用前后端分离实现开发，前端项目基于Vue进行构建项目，后端分别使用JFinal、Blade和ActFramework框架构建项目，开发设计实现集成JustAuthPlus的第三方登录、OAuth登录、OIDC登录和账号密码登录的测试项目。
+使用JFinal、Blade、ActFramework框架集成JAP的demo。采用前后端分离实现开发，前端项目基于Vue进行构建项目，后端分别使用JFinal、Blade和ActFramework框架构建项目，开发设计实现集成JustAuthPlus的第三方登录、OAuth登录、OIDC登录和账号密码登录的测试项目。<br>
+##### 分支说明：master————后端项目，VuePro————前端分支。
 
-##### 
+##### 技术标签
 
-#### 软件架构
-软件架构说明
+​          Java，Git，JFinal，Blade，ActFramework，第三方登录，OAuth2，JavaScript，animate，Vue，Axios，	ElementUI等。
 
-
-#### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+##### 使用介绍
 
 
-#### 特技
+[项目测试及帮助](http://https://gitee.com/wuhaoqiHomeP/JustAuthPlusDemo/blob/master/%E9%A1%B9%E7%9B%AE%E6%B5%8B%E8%AF%95%E5%8F%8A%E5%B8%AE%E5%8A%A9.md)
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+
