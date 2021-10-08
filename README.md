@@ -11,7 +11,7 @@
 ##### 使用介绍
 
 
-[项目测试及帮助](https://gitee.com/wuhaoqiHomeP/JustAuthPlusDemo/blob/master/%E9%A1%B9%E7%9B%AE%E6%B5%8B%E8%AF%95%E5%8F%8A%E5%B8%AE%E5%8A%A9.md)<br>
+[项目测试及帮助](https://github.com/DemowWu/JAP-demo/blob/master/%E9%A1%B9%E7%9B%AE%E6%B5%8B%E8%AF%95%E5%8F%8A%E5%B8%AE%E5%8A%A9.md)<br>
 [JustAuth社区链接](https://justauth.wiki/resource/summer2021.html)<br>
 [JustAuthPlus社区链接](https://discuss.justauth.plus/)<br>
 [JustAuthPlus链接-Gitee](https://gitee.com/fujieid/jap)<br>
